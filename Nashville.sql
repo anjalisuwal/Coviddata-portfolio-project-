@@ -1,15 +1,13 @@
-/*
-Cleaning Data in SQL Queries */
+/*Cleaning Data in SQL Queries */
 Select *
 From PortfolioProject.dbo.NashvilleHousing
-
-
+-------------------------------------------------------------------------------------------------------------------------------------
 
 --Standardize Date Format
 --look at the time data and see that it has time at the end so trying to remove the time and just get the date 
 Select SaleDateConverted, CONVERT (Date, SaleDate)
 From PortfolioProject.dbo.NashvilleHousing
--- this one does work some time and may not work sometime so use alter then update it and run the original query
+
 --Update NashvilleHousing 
 --SET SaleDate = CONVERT (Date, SaleDate)
 
@@ -18,6 +16,8 @@ Add SaleDateConverted Date;
 
 Update NashvilleHousing 
 SET SaleDateConverted = CONVERT (Date, SaleDate)
+
+-------------------------------------------------------------------------------------------------------------------------------------
 
 --Populate Property Address Data 
 Select *
@@ -40,8 +40,10 @@ SET PropertyAddress=ISNULL(a.PropertyAddress,b.PropertyAddress)
 	 And a.[UniqueID] <> b.[UniqueID]
 Where a.PropertyAddress is null
 
+-------------------------------------------------------------------------------------------------------------------------------------
+
 --Breaking out Address into individual Columns(Address, City, State)
---delimiter or separator over here is comma
+--delimiter over here is comma
 Select PropertyAddress
 From PortfolioProject.dbo.NashvilleHousing
 --Order by ParcelID
@@ -65,6 +67,8 @@ ADD PropertySplitCity Nvarchar(255);
 
 Update NashvilleHousing
 SET PropertySplitCity = SUBSTRING( PropertyAddress, CHARINDEX(',',PropertyAddress)+1,LEN(PropertyAddress)) 
+
+-------------------------------------------------------------------------------------------------------------------------------------
  
 
 Select *
@@ -105,6 +109,8 @@ SET OwnerSplitState = Parsename(Replace (OwnerAddress,',','.'),1)
 Select *
 From PortfolioProject.dbo.NashvilleHousing
 
+-------------------------------------------------------------------------------------------------------------------------------------
+
 --Change Y and N to YEs and no in "Solid as Vacant" Field
 Select DISTINCT(SoldAsVacant), count( SoldAsVacant)
 From PortfolioProject.dbo.NashvilleHousing
@@ -123,6 +129,8 @@ SET SoldAsVacant = CASE When SoldAsVacant='Y' THEN 'YES'
        When SoldAsVacant='N' THEN 'NO'
 	   Else SOldAsVacant
 	   END
+
+-------------------------------------------------------------------------------------------------------------------------------------
 
 --Remove Duplicates 
 --look more into rank and rank number,row number
@@ -150,6 +158,8 @@ Where row_num >1
 Delete
 From RowNumCTE
 Where row_num >1--got rid of the duplicates
+
+-------------------------------------------------------------------------------------------------------------------------------------
 
 -- Delete unused Columns
 Select *
